@@ -15,6 +15,9 @@ class ArticleView extends StatefulWidget {
 class _ArticleViewState extends State<ArticleView> {
 
   final Completer<WebViewController> _controller = Completer<WebViewController>();
+  bool isLoading=true;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,16 +44,28 @@ class _ArticleViewState extends State<ArticleView> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: WebView(
-          initialUrl:  widget.postUrl,
-          onWebViewCreated: (WebViewController webViewController){
-            _controller.complete(webViewController);
-          },
-        ),
+      body: Stack(
+        children:[
+          Container(
+          height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: WebView(
+        onPageFinished: (finish){
+          setState(() {
+            isLoading = false;
+          });
+        },
+        initialUrl:  widget.postUrl,
+        onWebViewCreated: (WebViewController webViewController){
+          _controller.complete(webViewController);
+        },
       ),
+    ),
+          isLoading ? Center( child: CircularProgressIndicator(),)
+              : Stack(),
+        ]
+      ),
+
     );
   }
 }
